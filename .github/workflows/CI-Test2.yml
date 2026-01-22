@@ -1,0 +1,36 @@
+name: Google-Sheet-Test2
+
+on:
+  #push:
+  #  branches: [ "main" ]
+  schedule:
+    - cron: '*/30 * * * *'
+  workflow_dispatch:
+  
+  #schedule:
+  #  - cron: '*/5 * * * *'
+  #workflow_dispatch: # 수동 실행 버튼
+
+jobs:
+  write-to-sheet:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 1. 코드 가져오기
+        uses: actions/checkout@v4
+
+      - name: 2. 파이썬 설치
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 3. 라이브러리 설치 (구글 시트 전용)
+        run: |
+          pip install gspread oauth2client
+          # 또는 pip install -r 260122_Action_Test/requirements.txt # "이 파일에 적힌 거 다 깔아!"라는 뜻
+
+      - name: 4. 메인 프로그램 실행
+        env:
+          GSPREAD_AUTH: ${{ secrets.GSPREAD_JSON }}
+          # 실행 원인(event_name)을 파이썬 환경변수로 넘겨줍니다.
+          RUN_TYPE: ${{ github.event_name }}
+        run: python 260122_Action_Test2/260122_gs_test2.py
