@@ -1,11 +1,22 @@
 name: Google-Sheet-Test2
 
+# 이 워크플로는 외부 Cron(ChemiCloud)에서 GitHub API를 통해
+# workflow_dispatch 방식으로만 실행됩니다.
+# GitHub 자체 schedule / push 트리거는
+# 중복 실행을 방지하기 위해 의도적으로 비활성화했습니다.
+
 on:
   # push:
   #   branches: [ "main" ]
   # schedule:
   #   - cron: '*/30 * * * *'
   workflow_dispatch:
+
+# 5분 단위 등 잦은 실행 시 작업이 겹치지 않도록
+# 이전 작업이 끝나면 다음 작업을 순차적으로 실행합니다.
+concurrency:
+  group: google-sheet-job
+  cancel-in-progress: false
   
   #schedule:
   #  - cron: '*/5 * * * *'
